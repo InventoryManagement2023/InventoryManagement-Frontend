@@ -1,17 +1,22 @@
-import { FC, useContext, useEffect, useState } from 'react';
-import { IDepartment, IDetailInventoryItem, ILocation, IPrinter, ISupplier, IType } from 'components/interfaces';
-import { Box, Container, Grid, Typography } from '@mui/material';
+import {FC, useContext, useEffect, useState} from 'react';
+import {IDepartment, IDetailInventoryItem, ILocation, IPrinter, ISupplier, IType} from 'components/interfaces';
+import {Box, Container, Grid, Typography} from '@mui/material';
 import CustomAutocomplete from 'components/form-fields/CustomAutocomplete';
-import { Add, CheckCircle } from '@mui/icons-material';
+import {Add, CheckCircle} from '@mui/icons-material';
 import CustomTextField from 'components/form-fields/CustomTextField';
 import ImageUpload from 'components/image-upload/ImageUpload';
 import CustomDatePicker from 'components/form-fields/CustomDatePicker';
 import useFormValidation from 'hooks/useFormValidation';
 import useIsFirstRender from 'hooks/useIsFirstRender';
 import CustomButton from 'components/form-fields/CustomButton';
-import { defaultInventory, droppedSchema, inventoryFormRequiredSchema, issuedSchema } from 'components/forms/inventory-form/inventoryFormDefaultValues';
+import {
+    defaultInventory,
+    droppedSchema,
+    inventoryFormRequiredSchema,
+    issuedSchema
+} from 'components/forms/inventory-form/inventoryFormDefaultValues';
 import AskAgainFormGroup from 'components/forms/inventory-form/AskAgainFormGroup';
-import { UserContext } from 'pages/_app';
+import {UserContext} from 'pages/_app';
 import LoadingSpinner from 'components/layout/LoadingSpinner';
 import CustomDivider from 'components/layout/CustomDivider';
 import IssueReturnDropForm from 'components/forms/inventory-form/IssueReturnDropForm';
@@ -30,19 +35,30 @@ interface IInventoryFormProps {
 }
 
 const InventoryForm: FC<IInventoryFormProps> = (props) => {
-    const { type, location, supplier, printer, department, preFilledValues, disabled, onFormSent, initialCreation } = props;
+    const {
+        type,
+        location,
+        supplier,
+        printer,
+        department,
+        preFilledValues,
+        disabled,
+        onFormSent,
+        initialCreation
+    } = props;
 
-    const { userId, admin, superAdmin } = useContext(UserContext);
+    const {userId, admin, superAdmin} = useContext(UserContext);
     const isFirstRender = useIsFirstRender();
 
     const [inventoryForm, setInventoryForm] = useState<IDetailInventoryItem>(
         preFilledValues
             ? {
-                  ...preFilledValues,
-                  pictures: undefined
-              }
+                ...preFilledValues,
+                pictures: undefined
+            }
             : JSON.parse(JSON.stringify(defaultInventory))
     );
+
     const [isSinglePieceItem, setIsSinglePieceItem] = useState(false);
     const [formValidation, setFormValidation] = useState(JSON.parse(JSON.stringify(inventoryFormRequiredSchema)));
     const [piecesCorrect, setPiecesCorrect] = useState(true);
@@ -73,14 +89,14 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
         if (initialCreation) {
             fetch(`${process.env.HOSTNAME}/api/inventorymanagement/department/user/${userId}`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {'Content-Type': 'application/json'}
             })
                 .then((response) => {
                     if (response.ok) {
                         response
                             .json()
                             .then((result) => {
-                                setInventoryForm({ ...inventoryForm, department: result } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, department: result} as IDetailInventoryItem);
                             })
                             .catch((error) => {
                                 console.log(error.message);
@@ -109,7 +125,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
     function refreshInternalNumber() {
         fetch(`${process.env.HOSTNAME}/api/inventorymanagement/inventory/internal_number/${inventoryForm.type?.typeName}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: {'Content-Type': 'application/json'}
         })
             .then((response) => {
                 if (response.ok) {
@@ -130,11 +146,11 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                         });
                     setLoading(false);
                 } else {
-                    setInventoryForm({ ...inventoryForm, itemInternalNumber: 'ERROR' } as IDetailInventoryItem);
+                    setInventoryForm({...inventoryForm, itemInternalNumber: 'ERROR'} as IDetailInventoryItem);
                 }
             })
             .catch(() => {
-                setInventoryForm({ ...inventoryForm, itemInternalNumber: 'ERROR' } as IDetailInventoryItem);
+                setInventoryForm({...inventoryForm, itemInternalNumber: 'ERROR'} as IDetailInventoryItem);
             });
     }
 
@@ -192,7 +208,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                     alignItems: 'center'
                 }}
             >
-                <LoadingSpinner />
+                <LoadingSpinner/>
             </Container>
         );
     } else {
@@ -224,7 +240,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                                 >
                                     Inventargegenstand erfassen
                                 </Typography>
-                                <Box sx={{ my: 3 }} />
+                                <Box sx={{my: 3}}/>
                             </Container>
                         )}
                         <CustomAutocomplete
@@ -233,7 +249,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label="Typ"
                             value={inventoryForm.type?.typeName ?? ''}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, type: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, type: val} as IDetailInventoryItem);
                             }}
                             error={formValidation.find((field) => field.name === 'type')?.error ?? false}
                             required={true}
@@ -243,7 +259,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label={initialCreation ? 'Voraussichtliche Inventarnummer' : 'Inventarnummer'}
                             value={inventoryForm.itemInternalNumber}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, itemInternalNumber: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, itemInternalNumber: val} as IDetailInventoryItem);
                             }}
                             error={false}
                             required={true}
@@ -253,7 +269,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label="Beschreibung"
                             value={inventoryForm.itemName}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, itemName: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, itemName: val} as IDetailInventoryItem);
                             }}
                             disabled={disabled}
                         />
@@ -261,7 +277,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label="Alte Inventarnummer"
                             value={inventoryForm.oldItemNumber}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, oldItemNumber: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, oldItemNumber: val} as IDetailInventoryItem);
                             }}
                             error={false}
                             disabled={disabled}
@@ -270,7 +286,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label="Seriennummer"
                             value={inventoryForm.serialNumber}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, serialNumber: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, serialNumber: val} as IDetailInventoryItem);
                             }}
                             disabled={disabled}
                         />
@@ -280,7 +296,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label="Standort"
                             value={inventoryForm.location?.locationName ?? ''}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, location: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, location: val} as IDetailInventoryItem);
                             }}
                             error={formValidation.find((field) => field.name === 'location')?.error ?? false}
                             required={true}
@@ -292,7 +308,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label="Lieferant"
                             value={inventoryForm.supplier?.supplierName ?? ''}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, supplier: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, supplier: val} as IDetailInventoryItem);
                             }}
                             error={formValidation.find((field) => field.name === 'supplier')?.error ?? false}
                             required={true}
@@ -438,7 +454,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                                     label="Ausgegeben an"
                                     value={inventoryForm.issuedTo}
                                     setValue={(val) => {
-                                        setInventoryForm({ ...inventoryForm, issuedTo: val } as IDetailInventoryItem);
+                                        setInventoryForm({...inventoryForm, issuedTo: val} as IDetailInventoryItem);
                                         setIssuedError(false);
                                     }}
                                     multiline={!isSinglePieceItem}
@@ -495,7 +511,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                             label="Anmerkungen"
                             value={inventoryForm.comments}
                             setValue={(val) => {
-                                setInventoryForm({ ...inventoryForm, comments: val } as IDetailInventoryItem);
+                                setInventoryForm({...inventoryForm, comments: val} as IDetailInventoryItem);
                             }}
                             error={false}
                             multiline={true}
@@ -508,7 +524,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                                 label="Abteilung"
                                 value={inventoryForm.department?.departmentName ?? ''}
                                 setValue={(val) => {
-                                    setInventoryForm({ ...inventoryForm, department: val } as IDetailInventoryItem);
+                                    setInventoryForm({...inventoryForm, department: val} as IDetailInventoryItem);
                                 }}
                                 error={formValidation.find((field) => field.name === 'department')?.error ?? false}
                                 required={true}
@@ -563,12 +579,12 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                                 }
                             />
                         )}
-                        <Box sx={{ my: 5.5 }} />
+                        <Box sx={{my: 5.5}}/>
                         {!disabled && (
                             <CustomButton
                                 label={preFilledValues ? 'Absenden' : 'Erfassen'}
                                 onClick={onSend}
-                                symbol={preFilledValues ? <CheckCircle /> : <Add />}
+                                symbol={preFilledValues ? <CheckCircle/> : <Add/>}
                                 disabled={disabled}
                             />
                         )}
@@ -578,7 +594,7 @@ const InventoryForm: FC<IInventoryFormProps> = (props) => {
                                     marginTop={disabled ? '2.5em' : '2em'}
                                     marginBottom="2em"
                                 >
-                                    <CustomDivider />
+                                    <CustomDivider/>
                                 </Grid>
                                 <IssueReturnDropForm
                                     inventoryForm={inventoryForm}
