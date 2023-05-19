@@ -17,7 +17,6 @@ const Erfassen: FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [formError, setFormError] = useState('');
-
     const { userId, firstName, lastName, admin, superAdmin, departmentId, departmentName } = useContext(UserContext);
 
     const fetchData = async (typeToFetch: string, setMethod: (res: JSON) => void) => {
