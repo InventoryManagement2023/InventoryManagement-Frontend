@@ -1,4 +1,4 @@
-import {Grid} from '@mui/material';
+import {Button, Grid, Typography} from '@mui/material';
 import {FC, useContext, useEffect, useState} from 'react';
 import {ICategory, IDepartment, IDetailInventoryItem, ILocation, ISupplier, IType} from "components/interfaces";
 import CustomAutocomplete from "components/form-fields/CustomAutocomplete";
@@ -28,13 +28,16 @@ interface IExportFormTable {
     ausscheidedatumBis: String;
     initialCreation?: boolean;
     preFilledValues?: IDetailInventoryItem;
+    showFilter:boolean
 }
+
+
 
 const ExportForm: FC<IExportFormTable> = (props) => {
     const [formValidation] = useState(JSON.parse(JSON.stringify(inventoryFormRequiredSchema)));
     const {userId} = useContext(UserContext);
     const {department, category, supplier, location, initialCreation, preFilledValues, type} = props;
-
+    const [showFilter, changeFilter] = useState(false);
     //const [exportForm, setExportForm] = useState<IExportFormTable>();
     const [exportForm, setExportForm] = useState<IExportFormTable>(
         preFilledValues
@@ -74,11 +77,21 @@ const ExportForm: FC<IExportFormTable> = (props) => {
 
     }, []);
 
-
+    function setFilter() {
+        changeFilter(!showFilter);
+    }
 
 
     let element = <><>
+<Button
+
+    onClick={()=> setFilter()}
+>
+    <Typography>Filter</Typography>
+</Button>
+
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -90,6 +103,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
                 optionKey="departmentName"
                 label="Abteilung"
                 //value={exportForm.department?.departmentName ?? ''}
+                //value={exportForm.department[0].departmentName ''}
                 setValue={(val) => {
                     setExportForm({...exportForm, department: val} as IExportFormTable);
                 }}
@@ -99,6 +113,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
             />)}
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -118,6 +133,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
                 />)}
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -142,6 +158,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
             />
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -166,6 +183,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
             />
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -190,6 +208,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
             />
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -214,6 +233,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
             />
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -233,6 +253,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
                 />)}
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -252,6 +273,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
                 />)}
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -271,6 +293,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
                 />)}
         </Grid>
         <Grid
+            display={showFilter ? 'flex' : 'none'  }
             container
             justifyContent="center"
             marginTop="0.5em"
@@ -286,6 +309,7 @@ const ExportForm: FC<IExportFormTable> = (props) => {
 
                 />
         </Grid>
+
     </>
     </>;
     return element;

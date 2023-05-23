@@ -5,7 +5,7 @@ import {Alert, Container, Stack} from '@mui/material';
 import {Add} from '@mui/icons-material';
 import CustomButton from 'components/form-fields/CustomButton';
 import ErrorInformation from "components/layout/ErrorInformation";
-
+import DataTableInventorySearchable from "components/tables/DataTableInventorySearchable";
 
 const Export: FC = () => {
     //const [type, setType] = useState<IType[] | JSON | null>(null);
@@ -79,6 +79,7 @@ const Export: FC = () => {
         return (
             <Container sx={{mt: 12, mb: 8}}>
                 <ExportForm
+                    showFilter = {false}
                     department={[]}
                     type={[]}
                     category={[]}
@@ -98,7 +99,15 @@ const Export: FC = () => {
                     //department={department as IDepartment[]}
 
                 />
+                <DataTableInventorySearchable
+                    showSwitchAndLegend={false}
+                    getSearchUrl={(search) =>
+                        `${process.env.HOSTNAME}/api/inventorymanagement/chart/last_items/${search ? ("?search=*" + search + "*") : ""}`
+
+                    }
+                />
             </Container>
+
         );
     }
 };
