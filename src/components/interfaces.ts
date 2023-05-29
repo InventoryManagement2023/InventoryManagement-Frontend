@@ -123,6 +123,7 @@ export type GenericObject = { [key: string]: any };
 export interface IPicture {
     id?: number;
     pictureUrl: string | ArrayBuffer;
+    thumbnailUrl?: string | ArrayBuffer;
 }
 
 export interface IChange {

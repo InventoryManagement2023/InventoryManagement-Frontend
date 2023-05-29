@@ -1,7 +1,7 @@
 import {
     IDepartment,
     IDepartmentMember, IDetailInventoryItem,
-    IInventoryItem
+    IInventoryItem, IPicture
 } from "components/interfaces";
 import { deleteRequest, getJson, patch } from "service/baseService";
 import { GridRowId } from "@mui/x-data-grid";
@@ -27,6 +27,8 @@ function getDepartmentOfUser(userId: number): Promise<IDepartment> {
 
 function getAllDepartments() {
     return getJson<IDepartment[]>(`${basePath}/department/`);
+}function getPicture(id:number) {
+    return getJson<IPicture>(`${basePath}/picture/${id}`);
 }
 
 function updateReviewer(userId: number, droppingReviewer: boolean) {
@@ -59,5 +61,6 @@ export default {
     getDepartmentOfUser,
     deactivateInventoryItem,
     reactivateInventoryItem,
-    updateInventoryItem
+    updateInventoryItem,
+    getPicture
 };
