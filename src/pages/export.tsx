@@ -1,25 +1,26 @@
-import {FC, useEffect, useState} from 'react';
+import { FC, useEffect, useState } from 'react';
 import LoadingSpinner from 'components/layout/LoadingSpinner';
 import ExportForm from 'components/forms/ExportForm';
-import {Alert, Container, Stack} from '@mui/material';
-import {Add} from '@mui/icons-material';
+import { Alert, Container, Stack } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import CustomButton from 'components/form-fields/CustomButton';
-import ErrorInformation from "components/layout/ErrorInformation";
-import DataTableInventorySearchable from "components/tables/DataTableInventorySearchable";
+import ErrorInformation from 'components/layout/ErrorInformation';
+//import DataTableInventorySearchable from 'components/tables/DataTableInventorySearchable';
+import { ICategory, IDepartment, ILocation, IPrinter, ISupplier, IType } from 'components/interfaces';
 
 const Export: FC = () => {
-    //const [type, setType] = useState<IType[] | JSON | null>(null);
-    // const [department] = useState<IDepartment[] | JSON | null>(null);
-    const [error] = useState(false);
-    //const [location, setLocation] = useState<ILocation[] | JSON | null>(null);
-    //const [supplier, setSupplier] = useState<ISupplier[] | JSON | null>(null);
-    //const [printer, setPrinter] = useState<IPrinter[] | JSON | null>(null);
-    //const { userId, firstName, lastName, admin, superAdmin, departmentId, departmentName } = useContext(UserContext);
-
+    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
-    //const [error] = useState(false);
     const [formError, setFormError] = useState('');
-    /*const fetchData = async (typeToFetch: string, setMethod: (res: JSON) => void) => {
+    const [type, setType] = useState<IType[] | JSON | null>([]);
+    const [department,setDepartment] = useState<IDepartment[] | JSON | null>([]);
+    const [location, setLocation] = useState<ILocation[] | JSON | null>([]);
+    const [supplier, setSupplier] = useState<ISupplier[] | JSON | null>([]);
+    const [printer, setPrinter] = useState<IPrinter[] | JSON | null>([]);
+    const [category,setCategory] = useState<ICategory[] | JSON | null>([]);
+    // const { userId, firstName, lastName, admin, superAdmin, departmentId, departmentName } = useContext(UserContext);
+
+    const fetchData = async (typeToFetch: string, setMethod: (res: JSON) => void) => {
         await fetch(`${process.env.HOSTNAME}/api/inventorymanagement/${typeToFetch}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
@@ -28,10 +29,15 @@ const Export: FC = () => {
                 response.json().then((res) => setMethod(res));
             }
         });
-    };*/
+    };
+
     useEffect(() => {
-        //fetchData('type', setType).catch(() => setError(true));
-        //fetchData('department', setDepartment).catch(() => setError(true));
+        fetchData('type', setType).catch(() => setError(true));
+        fetchData('department', setDepartment).catch(() => setError(true));
+        fetchData('location', setLocation).catch(() => setError(true));
+        fetchData('supplier', setSupplier).catch(() => setError(true));
+        fetchData('printer', setPrinter).catch(() => setError(true));
+        fetchData('category', setCategory).catch(() => setError(true));
         setLoading(false);
     }, []);
 
@@ -46,16 +52,14 @@ const Export: FC = () => {
                     alignItems: 'center'
                 }}
             >
-                <LoadingSpinner/>
+                <LoadingSpinner />
             </Container>
         );
     } else if (error) {
-        return (
-            <ErrorInformation></ErrorInformation>
-        );
+        return <ErrorInformation></ErrorInformation>;
     } else if (formError) {
         return (
-            <Container sx={{mt: 12, mb: 8, display: 'flex', flexFlow: 'column nowrap', alignItems: 'center'}}>
+            <Container sx={{ mt: 12, mb: 8, display: 'flex', flexFlow: 'column nowrap', alignItems: 'center' }}>
                 <Stack
                     sx={{
                         width: '17em',
@@ -69,45 +73,26 @@ const Export: FC = () => {
                 <CustomButton
                     label="Neuen Gegenstand erfassen"
                     onClick={() => setFormError('')}
-                    symbol={<Add/>}
+                    symbol={<Add />}
                 />
             </Container>
         );
     } else {
-
-
         return (
-            <Container sx={{mt: 12, mb: 8}}>
+            <Container sx={{ mt: 12, mb: 8 }}>
                 <ExportForm
-                    showFilter = {false}
-                    department={[]}
-                    type={[]}
-                    category={[]}
-                    location={[]}
+                    category={category as ICategory[]}
+                    printer={printer as IPrinter[]}
+                    department={department as IDepartment[]}
+                    type={type as IType[]}
+                    location={location as ILocation[]}
+                    status={status}
+                    supplier={supplier as ISupplier[]}
                     initialCreation={true}
-                    anlagedatumBis=""
-                    anlagedatumVon=""
-                    lieferdatumBis=""
-                    lieferdatumVon=""
-                    ausgabedatumBis=""
-                    ausgabedatumVon=""
-                    ausscheidedatumBis=""
-                    ausscheidedatumVon=""
-                    status = ""
-                    supplier={[]}
-
-                    //department={department as IDepartment[]}
-
+                    disabled={loading}
                 />
-                <DataTableInventorySearchable
-                    showSwitchAndLegend={false}
-                    getSearchUrl={(search) =>
-                        `${process.env.HOSTNAME}/api/inventorymanagement/chart/last_items/${search ? ("?search=*" + search + "*") : ""}`
 
-                    }
-                />
             </Container>
-
         );
     }
 };
