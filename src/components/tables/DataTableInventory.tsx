@@ -4,7 +4,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { Box, Chip, Grid, Typography } from '@mui/material';
-import { IDataTableInventory, IInventoryItem } from 'components/interfaces';
+import {IDataTableInventory, IDetailInventoryItem} from 'components/interfaces';
 import CommonConstants from 'utils/CommonConstants';
 import { darkGrey } from 'styles/theme';
 import { useRouter } from 'next/router';
@@ -150,7 +150,7 @@ const DataTableInventory: FC<IDataTableInventory> = (props) => {
                                 return false;
                             }
                             return true;
-                        } ).map((item: IInventoryItem) => ({
+                        } ).map((item: IDetailInventoryItem) => ({
                             id: item.id,
                             itemInternalNumber: item.itemInternalNumber,
                             category: item.type?.category?.categoryName,
