@@ -89,7 +89,7 @@ const Details: FC = () => {
     }, [id, updated]);
 
     useEffect(() => {
-        const image = inventoryItem?.pictures?.filter((pic) => (pic.pictureUrl as string)?.split(',')?.[0]?.includes('image'));
+        const image = inventoryItem?.pictures?.filter((pic) => (pic.thumbnailUrl as string)?.split(',')?.[0]?.includes('image') ||  (pic.pictureUrl as string)?.split(',')?.[0]?.includes('image'));
         const pdfs = inventoryItem?.pictures?.filter((pic) => (pic.pictureUrl as string)?.split(',')?.[0]?.includes('pdf'));
         if (image && image.length !== 0) {
             setImageList(image);
