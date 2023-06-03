@@ -14,6 +14,7 @@ import { Cancel, CheckCircle } from "@mui/icons-material";
 import { DroppingActivationUtil } from "utils/droppingActivationUtil";
 import { formatISO } from "date-fns";
 import CustomAlert from "components/form-fields/CustomAlert";
+
 const Warteschlange: FC = () => {
     const {
         admin,
@@ -30,11 +31,13 @@ const Warteschlange: FC = () => {
     const [serverError, setServerError] = useState(false);
     const [loading, setLoading] = useState(true);
     const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
-    const [selectionError,setSelectionError] = useState(false);
+    const [selectionError, setSelectionError] = useState(false);
+    const [saveSuccessful, setSaveSuccessful] = useState(false);
+    const [saveError, setSaveError] = useState(false);
 
     const loadItems = () => {
         setLoading(true);
-        setSelectionModel([])
+        setSelectionModel([]);
         let request: Promise<IDetailInventoryItem[]>;
         if ((superAdmin || admin) && adminMode) {
             request = inventoryManagementService.getAllDroppingQueueInventoryItems();
@@ -58,7 +61,9 @@ const Warteschlange: FC = () => {
     }, []);
 
     const send = (bestaetigen: boolean) => {
-        let requests:Promise<any>[] = [];
+        let requests: Promise<any>[] = [];
+        setSaveError(false);
+        setSaveSuccessful(false);
         for (let item of items) {
             if (!selectionModel.find(x => (x as number) === item.id)) {
                 continue;
@@ -79,9 +84,9 @@ const Warteschlange: FC = () => {
                         userName: `${firstName} ${lastName}`
                     };
                     DroppingActivationUtil.unsetDroppingProperties(form);
-                   requests.push(inventoryManagementService.updateInventoryItem(form));
+                    requests.push(inventoryManagementService.updateInventoryItem(form));
                 } else if (DroppingActivationUtil.isDeaktivieren(item) && item.id) {
-                    requests.push(inventoryManagementService.deactivateInventoryItem(item.id,{
+                    requests.push(inventoryManagementService.deactivateInventoryItem(item.id, {
                         ...item,
                         userName: `${firstName} ${lastName}`
                     }));
@@ -94,11 +99,14 @@ const Warteschlange: FC = () => {
                 DroppingActivationUtil.unsetDroppingProperties(form);
                 requests.push(inventoryManagementService.updateInventoryItem(form));
             }
-            if(requests){
-            Promise.all(requests).then(() => {
+            if (requests) {
+                Promise.all(requests).then(() => {
+                    setSaveSuccessful(true);
                     loadItems();
+
                 }).catch(() => {
-                loadItems();
+                    setSaveError(true);
+                    loadItems();
                 });
             }
         }
@@ -113,10 +121,12 @@ const Warteschlange: FC = () => {
             <DataTableInventory items={items} setSearch={() => {
             }} includeDroppingInformation selectionModel={selectionModel} setSelectionModel={val => {
                 setSelectionModel(val);
-                if(items.filter(item => val.find(x => (x as number) === item.id) && item.droppingQueueRequester == userId).length > 0){
+                setSaveSuccessful(false);
+                setSaveError(false);
+                if (items.filter(item => val.find(x => (x as number) === item.id) && item.droppingQueueRequester == userId).length > 0) {
                     setSelectionError(true);
-                }else{
-                    setSelectionError(false)
+                } else {
+                    setSelectionError(false);
                 }
             }}
             />
@@ -124,6 +134,13 @@ const Warteschlange: FC = () => {
                 <CustomAlert
                     state="error"
                     message="Auswahl darf keine Elemente enthalten, bei denen das Ausscheiden/Deaktivieren selbst angefordert wurde!"
+                />
+            }
+            <ErrorInformation hidden={!saveError}></ErrorInformation>
+            {saveSuccessful &&
+                <CustomAlert
+                    state="success"
+                    message="Änderungen wurden durchgeführt!"
                 />
             }
             <Grid
