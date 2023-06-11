@@ -38,19 +38,13 @@ interface IExportFormTable {
 
 interface ExportFormProps {
     department?: IDepartment[];
-    type?:IType[];
-    category?:ICategory[];
-    supplier?:ISupplier[];
-    status?:String
-    location?:ILocation[];
-    anlagedatumVon: String;
-    anlagedatumBis: String;
-    lieferdatumVon: String;
-    lieferdatumBis: String;
-    ausgabedatumVon: String;
-    ausgabedatumBis: String;
-    ausscheidedatumVon: String;
-    ausscheidedatumBis: String;
+    type?: IType[];
+    printer?: IPrinter[];
+
+    category: ICategory[];
+    supplier?: ISupplier[];
+    status?: String;
+    location?: ILocation[];
     initialCreation?: boolean;
     preFilledValues?: IDetailInventoryItem;
 

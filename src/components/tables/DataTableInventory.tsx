@@ -4,7 +4,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { Box, Chip, Grid, Typography } from '@mui/material';
-import { IDataTableInventory, IDetailInventoryItem } from "components/interfaces";
+import {IDataTableInventory, IDetailInventoryItem} from 'components/interfaces';
 import CommonConstants from 'utils/CommonConstants';
 import { darkGrey } from 'styles/theme';
 import { useRouter } from 'next/router';
