@@ -1,11 +1,23 @@
-import { Grid, Button } from '@mui/material';
-import { FC, useContext, useEffect, useState } from 'react';
-import { ICategory, IDepartment, IDetailInventoryItem, ILocation, IPrinter, ISupplier, IType } from 'components/interfaces';
+import {Grid, Button} from '@mui/material';
+import {FC, useContext, useEffect, useState} from 'react';
+import {
+    ICategory,
+    IDepartment,
+    IDetailInventoryItem,
+    ILocation,
+    IPrinter,
+    ISupplier,
+    IType
+} from 'components/interfaces';
 import CustomAutocomplete from 'components/form-fields/CustomAutocomplete';
-import { UserContext } from 'pages/_app';
-import { defaultInventory, inventoryFormRequiredSchema } from 'components/forms/inventory-form/inventoryFormDefaultValues';
+import {UserContext} from 'pages/_app';
+import {
+    defaultInventory,
+    inventoryFormRequiredSchema
+} from 'components/forms/inventory-form/inventoryFormDefaultValues';
 import CustomDatePicker from 'components/form-fields/CustomDatePicker';
 import CustomTextField from 'components/form-fields/CustomTextField';
+import {format} from "date-fns";
 
 interface IExportFormTable {
     department?: IDepartment;
@@ -48,8 +60,8 @@ interface ExportFormProps {
 const ExportForm: FC<ExportFormProps> = (props) => {
     const [formValidation] = useState(JSON.parse(JSON.stringify(inventoryFormRequiredSchema)));
 
-    const { userId } = useContext(UserContext);
-    const { department, category, supplier, location, initialCreation, preFilledValues, type, disabled } = props;
+    const {userId} = useContext(UserContext);
+    const {department, category, supplier, location, initialCreation, preFilledValues, type, disabled} = props;
     const [exportForm, setExportForm] = useState<IExportFormTable>(
         preFilledValues
             ? {
@@ -63,7 +75,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
         if (initialCreation) {
             fetch(`${process.env.HOSTNAME}/api/inventorymanagement/department/user/${userId}`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {'Content-Type': 'application/json'}
             })
                 .then((response) => {
                     if (response.ok) {
@@ -71,7 +83,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                             .json()
                             .then((result) => {
                                 console.log(result);
-                                setExportForm({ ...exportForm, department: result });
+                                setExportForm({...exportForm, department: result});
                             })
                             .catch((error) => {
                                 console.log(error.message);
@@ -104,60 +116,66 @@ const ExportForm: FC<ExportFormProps> = (props) => {
 
         let queryParams = "";
 
-        if ( department ) {
-            queryParams += `departmentId=${ department.id }&`;
+        if (department) {
+            queryParams += `departmentId=${department.id}&`;
         }
-        if ( category ) {
-            queryParams += `categoryId=${ category.id }&`;
+        if (category) {
+            queryParams += `categoryId=${category.id}&`;
         }
-        if ( type ) {
-            queryParams += `typeId=${ type.id }&`;
+        if (type) {
+            queryParams += `typeId=${type.id}&`;
         }
-        if ( anlagedatumBis ) {
-            queryParams += `droppingDateTo=${ anlagedatumBis }&`;
+        if (anlagedatumBis) {
+            queryParams += `droppingDateTo=${anlagedatumBis}&`;
         }
-        if ( anlagedatumVon ) {
-            queryParams += `droppingDateFrom=${ anlagedatumVon }&`;
+        if (anlagedatumVon) {
+            queryParams += `droppingDateFrom=${anlagedatumVon}&`;
         }
-        if ( ausgabedatumBis ) {
-            queryParams += `issueDateTo=${ ausgabedatumBis }&`;
+        if (ausgabedatumBis) {
+            queryParams += `issueDateTo=${ausgabedatumBis}&`;
         }
-        if ( ausgabedatumVon ) {
-            queryParams += `issueDateFrom=${ ausgabedatumVon }&`;
+        if (ausgabedatumVon) {
+            queryParams += `issueDateFrom=${ausgabedatumVon}&`;
         }
-        if ( ausscheidedatumBis ) {
-            queryParams += `changeDateTo=${ ausscheidedatumBis }&`;
+        if (ausscheidedatumBis) {
+            queryParams += `changeDateTo=${ausscheidedatumBis}&`;
         }
-        if ( ausscheidedatumVon ) {
-            queryParams += `changeDateFrom=${ ausscheidedatumVon }&`;
+        if (ausscheidedatumVon) {
+            queryParams += `changeDateFrom=${ausscheidedatumVon}&`;
         }
-        if ( lieferdatumBis ) {
-            queryParams += `deliveryDateTo=${ lieferdatumBis }&`;
+        if (lieferdatumBis) {
+            queryParams += `deliveryDateTo=${lieferdatumBis}&`;
         }
-        if ( lieferdatumVon ) {
-            queryParams += `deliveryDateFrom=${ lieferdatumVon }&`;
+        if (lieferdatumVon) {
+            queryParams += `deliveryDateFrom=${lieferdatumVon}&`;
         }
-        if ( location ) {
-            queryParams += `locationId=${ location.id }&`;
+        if (location) {
+            queryParams += `locationId=${location.id}&`;
         }
-        if ( status ) {
-            queryParams += `status=${ status }&`;
+        if (status) {
+            queryParams += `status=${status}&`;
         }
-        if ( supplier ) {
-            queryParams += `supplierId=${ supplier.id }&`;
+        if (supplier) {
+            queryParams += `supplierId=${supplier.id}&`;
         }
 
         fetch(
             `${process.env.HOSTNAME}/api/inventorymanagement/inventory/export?${queryParams}`,
             {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {'Content-Type': 'application/json'}
             }
         ).then((res) => {
             if (res.ok) {
-                res.json()
+                res.blob()
                     .then((res) => {
-                        console.log(res);
+                        const url = window.URL.createObjectURL(res);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = "Inventorymanagment_" + format(new Date(), "dd-MM-yyyy_HH-mm-ss") + ".xlsx";
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
                     })
                     .catch((error) => {
                         console.log(error.message);
@@ -181,7 +199,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                         label="Abteilung"
                         value={exportForm.department?.departmentName ?? ''}
                         setValue={(val) => {
-                            setExportForm({ ...exportForm, department: val } as IExportFormTable);
+                            setExportForm({...exportForm, department: val} as IExportFormTable);
                         }}
                         error={formValidation.find((field) => field.name === 'department')?.error ?? false}
                         required={false}
@@ -202,7 +220,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                         label="Kategorie"
                         value={exportForm.department?.departmentName ?? ''}
                         setValue={(val) => {
-                            setExportForm({ ...exportForm, category: val } as IExportFormTable);
+                            setExportForm({...exportForm, category: val} as IExportFormTable);
                         }}
                         error={formValidation.find((field) => field.name === 'category')?.error ?? false}
                         required={false}
@@ -220,7 +238,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Anlagedatum von"
                     value={exportForm.anlagedatumVon}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, anlagedatumVon: val } as IExportFormTable);
+                        setExportForm({...exportForm, anlagedatumVon: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -229,7 +247,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Anlagedatum bis"
                     value={exportForm.anlagedatumVon}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, anlagedatumBis: val } as IExportFormTable);
+                        setExportForm({...exportForm, anlagedatumBis: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -245,7 +263,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Lieferdatum von"
                     value={exportForm.anlagedatumVon}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, lieferdatumVon: val } as IExportFormTable);
+                        setExportForm({...exportForm, lieferdatumVon: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -254,7 +272,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Lieferdatum bis"
                     value={exportForm.anlagedatumVon}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, lieferdatumBis: val } as IExportFormTable);
+                        setExportForm({...exportForm, lieferdatumBis: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -270,7 +288,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Ausgabedatum von"
                     value={exportForm.ausgabedatumVon}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, ausgabedatumVon: val } as IExportFormTable);
+                        setExportForm({...exportForm, ausgabedatumVon: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -279,7 +297,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Ausgabedatum bis"
                     value={exportForm.ausgabedatumBis}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, ausgabedatumBis: val } as IExportFormTable);
+                        setExportForm({...exportForm, ausgabedatumBis: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -295,7 +313,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Ausscheidedatum von"
                     value={exportForm.ausscheidedatumVon}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, ausscheidedatumVon: val } as IExportFormTable);
+                        setExportForm({...exportForm, ausscheidedatumVon: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -304,7 +322,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Ausscheidedatum bis"
                     value={exportForm.ausscheidedatumBis}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, ausscheidedatumBis: val } as IExportFormTable);
+                        setExportForm({...exportForm, ausscheidedatumBis: val} as IExportFormTable);
                     }}
                     required={false}
                     disabled={disabled}
@@ -323,7 +341,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                         label="Typ"
                         value={exportForm.department?.departmentName ?? ''}
                         setValue={(val) => {
-                            setExportForm({ ...exportForm, type: val } as IExportFormTable);
+                            setExportForm({...exportForm, type: val} as IExportFormTable);
                         }}
                         error={formValidation.find((field) => field.name === 'type')?.error ?? false}
                         disabled={disabled}
@@ -343,7 +361,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                         label="Standort"
                         value={exportForm.department?.departmentName ?? ''}
                         setValue={(val) => {
-                            setExportForm({ ...exportForm, location: val } as IExportFormTable);
+                            setExportForm({...exportForm, location: val} as IExportFormTable);
                         }}
                         error={formValidation.find((field) => field.name === 'location')?.error ?? false}
                         disabled={disabled}
@@ -363,7 +381,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                         label="Lieferant"
                         value={exportForm.department?.departmentName ?? ''}
                         setValue={(val) => {
-                            setExportForm({ ...exportForm, supplier: val } as IExportFormTable);
+                            setExportForm({...exportForm, supplier: val} as IExportFormTable);
                         }}
                         error={formValidation.find((field) => field.name === 'supplier')?.error ?? false}
                         disabled={disabled}
@@ -380,19 +398,26 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                     label="Status"
                     value={exportForm.status}
                     setValue={(val) => {
-                        setExportForm({ ...exportForm, status: val } as IExportFormTable);
+                        setExportForm({...exportForm, status: val} as IExportFormTable);
                     }}
                     error={false}
                 />
             </Grid>
 
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleExport}
+            <Grid
+                display={'flex'}
+                container
+                justifyContent="center"
+                marginTop="0.5em"
             >
-                Exportieren
-            </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleExport}
+                >
+                    Excel File Download
+                </Button>
+            </Grid>
         </>
     );
 };
