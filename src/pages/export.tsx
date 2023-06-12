@@ -7,7 +7,6 @@ import CustomButton from 'components/form-fields/CustomButton';
 import ErrorInformation from 'components/layout/ErrorInformation';
 import {ICategory, IDepartment, ILocation, IPrinter, ISupplier, IType} from 'components/interfaces';
 import PageHeader from "components/layout/PageHeader";
-import {Box} from "@mui/system";
 
 const Export: FC = () => {
     const [error, setError] = useState(false);
