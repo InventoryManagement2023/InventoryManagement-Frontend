@@ -174,6 +174,7 @@ const ImageUpload: FC<IImageUploadProps> = ({ setPictures, disabled }) => {
                 <Tooltip title={noCameraAvailableError ? 'Kamera nicht verfügbar.' : null}>
                     <div style={{ cursor: `${noCameraAvailableError ? 'not-allowed' : 'pointer'}` }} /* necessary to show tooltip */>
                         <Button
+                            id="kameraButton"
                             variant="contained"
                             component="label"
                             color="secondary"
