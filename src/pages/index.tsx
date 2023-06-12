@@ -159,7 +159,6 @@ const Index: FC = () => {
                                 width="95%"
                                 margin="auto"
                                 alignItems="center"
-                                height="500px"
                                 justifyContent={matchesPhone ? 'center' : 'left'}
                                 marginBottom={matchesPhone ? '1em' : 0}
                             >

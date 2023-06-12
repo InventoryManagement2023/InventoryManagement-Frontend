@@ -1,4 +1,4 @@
-import {Grid, Button} from '@mui/material';
+import {Grid} from '@mui/material';
 import {FC, useContext, useEffect, useState} from 'react';
 import {
     ICategory,
@@ -16,8 +16,10 @@ import {
     inventoryFormRequiredSchema
 } from 'components/forms/inventory-form/inventoryFormDefaultValues';
 import CustomDatePicker from 'components/form-fields/CustomDatePicker';
-import CustomTextField from 'components/form-fields/CustomTextField';
+
 import {format} from "date-fns";
+import CustomTextField from 'components/form-fields/CustomTextField';
+import CustomButton from "components/form-fields/CustomButton";
 
 interface IExportFormTable {
     department?: IDepartment;
@@ -53,7 +55,6 @@ interface ExportFormProps {
 
 const ExportForm: FC<ExportFormProps> = (props) => {
     const [formValidation] = useState(JSON.parse(JSON.stringify(inventoryFormRequiredSchema)));
-
     const {userId} = useContext(UserContext);
     const {department, category, supplier, location, initialCreation, preFilledValues, type, disabled} = props;
     const [exportForm, setExportForm] = useState<IExportFormTable>(
@@ -120,10 +121,10 @@ const ExportForm: FC<ExportFormProps> = (props) => {
             queryParams += `typeId=${type.id}&`;
         }
         if (anlagedatumBis) {
-            queryParams += `droppingDateTo=${anlagedatumBis}&`;
+            queryParams += `changeDateTo=${anlagedatumBis}&`;
         }
         if (anlagedatumVon) {
-            queryParams += `droppingDateFrom=${anlagedatumVon}&`;
+            queryParams += `changeDateFrom=${anlagedatumVon}&`;
         }
         if (ausgabedatumBis) {
             queryParams += `issueDateTo=${ausgabedatumBis}&`;
@@ -132,10 +133,10 @@ const ExportForm: FC<ExportFormProps> = (props) => {
             queryParams += `issueDateFrom=${ausgabedatumVon}&`;
         }
         if (ausscheidedatumBis) {
-            queryParams += `changeDateTo=${ausscheidedatumBis}&`;
+            queryParams += `droppingDateTo=${ausscheidedatumBis}&`;
         }
         if (ausscheidedatumVon) {
-            queryParams += `changeDateFrom=${ausscheidedatumVon}&`;
+            queryParams += `droppingDateFrom=${ausscheidedatumVon}&`;
         }
         if (lieferdatumBis) {
             queryParams += `deliveryDateTo=${lieferdatumBis}&`;
@@ -178,6 +179,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
         });
     };
     console.log(department, exportForm)
+
     return (
         <>
             <Grid
@@ -212,7 +214,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                         options={category}
                         optionKey="categoryName"
                         label="Kategorie"
-                        value={exportForm.department?.departmentName ?? ''}
+                        value={exportForm.category?.categoryName ?? ''}
                         setValue={(val) => {
                             setExportForm({...exportForm, category: val} as IExportFormTable);
                         }}
@@ -239,7 +241,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                 />
                 <CustomDatePicker
                     label="Anlagedatum bis"
-                    value={exportForm.anlagedatumVon}
+                    value={exportForm.anlagedatumBis}
                     setValue={(val) => {
                         setExportForm({...exportForm, anlagedatumBis: val} as IExportFormTable);
                     }}
@@ -255,7 +257,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
             >
                 <CustomDatePicker
                     label="Lieferdatum von"
-                    value={exportForm.anlagedatumVon}
+                    value={exportForm.lieferdatumVon}
                     setValue={(val) => {
                         setExportForm({...exportForm, lieferdatumVon: val} as IExportFormTable);
                     }}
@@ -264,7 +266,7 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                 />
                 <CustomDatePicker
                     label="Lieferdatum bis"
-                    value={exportForm.anlagedatumVon}
+                    value={exportForm.lieferdatumBis}
                     setValue={(val) => {
                         setExportForm({...exportForm, lieferdatumBis: val} as IExportFormTable);
                     }}
@@ -404,13 +406,9 @@ const ExportForm: FC<ExportFormProps> = (props) => {
                 justifyContent="center"
                 marginTop="0.5em"
             >
-                <Button
-                    variant="contained"
-                    color="primary"
+                <CustomButton
                     onClick={handleExport}
-                >
-                    Excel File Download
-                </Button>
+                    label="Download"/>
             </Grid>
         </>
     );

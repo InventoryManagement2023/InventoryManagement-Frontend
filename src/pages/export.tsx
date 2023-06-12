@@ -1,11 +1,13 @@
 import {FC, useEffect, useState} from 'react';
 import LoadingSpinner from 'components/layout/LoadingSpinner';
 import ExportForm from 'components/forms/ExportForm';
-import {Alert, Container, Stack} from '@mui/material';
+import {Alert, Container, Grid, Stack} from '@mui/material';
 import {Add} from '@mui/icons-material';
 import CustomButton from 'components/form-fields/CustomButton';
 import ErrorInformation from 'components/layout/ErrorInformation';
 import {ICategory, IDepartment, ILocation, IPrinter, ISupplier, IType} from 'components/interfaces';
+import PageHeader from "components/layout/PageHeader";
+import {Box} from "@mui/system";
 
 const Export: FC = () => {
     const [error, setError] = useState(false);
@@ -78,6 +80,9 @@ const Export: FC = () => {
     } else {
         return (
             <Container sx={{mt: 12, mb: 8}}>
+                    <Grid item>
+                        <PageHeader title="Inventargegenstände exportieren" id="exportHeader"></PageHeader>
+                    </Grid>
                 <ExportForm
                     category={category as ICategory[]}
                     printer={printer as IPrinter[]}
